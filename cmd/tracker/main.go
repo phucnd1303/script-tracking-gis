@@ -11,17 +11,17 @@ import (
 )
 
 func main() {
+	var error = godotenv.Load()
+
+	if error != nil {
+		fmt.Printf("Error loading .env file: %v", error)
+		return
+	}
+
 	scenarios, error := internal.GetScenarios()
 
 	if error != nil {
 		fmt.Printf("Error getting scenarios: %v", error)
-		return
-	}
-
-	error = godotenv.Load()
-
-	if error != nil {
-		fmt.Printf("Error loading .env file: %v", error)
 		return
 	}
 
