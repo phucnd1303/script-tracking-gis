@@ -3,15 +3,14 @@ package main
 import (
 	"fmt"
 	internal "script-tracking-gis/internal"
+	"script-tracking-gis/internal/config"
 	"script-tracking-gis/types"
 	"sync"
 	"time"
-
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	var error = godotenv.Load()
+	cfg, error := config.NewConfig()
 
 	if error != nil {
 		fmt.Printf("Error loading .env file: %v", error)
@@ -35,7 +34,7 @@ func main() {
 
 			defer waitGroup.Done()
 
-			internal.PlantTracking(scenario)
+			internal.PlantTracking(cfg, scenario)
 		}(scenario)
 	}
 

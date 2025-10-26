@@ -1,8 +1,8 @@
 package internal
 
 import (
+	"script-tracking-gis/internal/config"
 	types "script-tracking-gis/types"
-	utils "script-tracking-gis/utils"
 	"time"
 )
 
@@ -12,9 +12,7 @@ func reverseLocations(locations *[]types.Location) {
 	}
 }
 
-func PlantTracking(scenario types.Scenario) {
-	apiKey := utils.GetAPIKey(scenario.Env)
-	apiURL := utils.GetPlantAPIURL(scenario.Env)
+func PlantTracking(cfg *config.Config, scenario types.Scenario) {
 	counter := 0
 	locationIndex := 0
 	isReverse := false
@@ -38,13 +36,11 @@ func PlantTracking(scenario types.Scenario) {
 			reverseLocations(&locations)
 		}
 
-		SendTrackingPlantData(SendTrackingPlantDataBuilder{
+		SendTrackingPlantData(cfg, SendTrackingPlantDataBuilder{
 			State: scenario.Env,
 			Location: locations[locationIndex],
 			SeqNo: counter,
 			SerNo: scenario.SerNo,
-			APIKey: apiKey,
-			APIURL: apiURL,
 		})
 
 		// fmt.Printf("[locationIndex %d - SerNo %s]\n", locationIndex, scenario.SerNo)

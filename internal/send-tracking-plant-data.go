@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"script-tracking-gis/internal/config"
 	types "script-tracking-gis/types"
 	"time"
 )
@@ -15,11 +16,11 @@ type SendTrackingPlantDataBuilder struct {
 	Location types.Location
 	SeqNo int
 	SerNo string
-	APIKey string
-	APIURL string
 }
 
-func SendTrackingPlantData(params SendTrackingPlantDataBuilder) {
+func SendTrackingPlantData(cfg *config.Config, params SendTrackingPlantDataBuilder) {
+	apiURL := cfg.GetAPIURL(params.State)
+	apiKey := cfg.GetAPIKey(params.State)
 	trackingPlantData := BuildTrackingPlantData(BuildTrackingPlantDataBuilder{
 		Latitude: params.Location.Latitude,
 		Longitude: params.Location.Longitude,
@@ -34,7 +35,7 @@ func SendTrackingPlantData(params SendTrackingPlantDataBuilder) {
 		return
 	}
 
-	request, error := http.NewRequest("POST", params.APIURL, bytes.NewBuffer(jsonData))
+	request, error := http.NewRequest("POST", apiURL, bytes.NewBuffer(jsonData))
 
 	if error != nil {
 		fmt.Printf("Error creating request: %v", error)
@@ -42,7 +43,7 @@ func SendTrackingPlantData(params SendTrackingPlantDataBuilder) {
 	}
 
 	request.Header.Set("Content-Type", "application/json")
-	request.Header.Set("x-api-key", params.APIKey)
+	request.Header.Set("x-api-key", apiKey)
 	request.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0")
 
 	client := &http.Client{
