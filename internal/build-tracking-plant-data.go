@@ -1,8 +1,8 @@
 package internal
 
 import (
+	"script-tracking-gis/pkg/utils"
 	types "script-tracking-gis/types"
-	utils "script-tracking-gis/utils"
 	"time"
 )
 
