@@ -1,4 +1,4 @@
-package internal
+package repository
 
 import (
 	"fmt"
@@ -12,8 +12,13 @@ const (
 	stageSIT = "sit"
 )
 
+const (
+	sydneyLocationsPath = "templates/australia/sydney.json"
+	duongDinhNgheLocationsPath = "templates/vietnam/duong-dinh-nghe.danang.json"
+)
+
 func GetScenarios() ([]types.Scenario, error) {
-	sydneyLocations, error := LoadLocationsTemplate("templates/australia/sydney.json")
+	sydneyLocations, error := LoadLocationsTemplate(sydneyLocationsPath)
 
 	if error != nil {
 		fmt.Printf("Error loading locations template: %v", error)
@@ -21,7 +26,7 @@ func GetScenarios() ([]types.Scenario, error) {
 		return nil, error
 	}
 
-	duongDinhNgheLocations, error := LoadLocationsTemplate("templates/vietnam/duong-dinh-nghe.danang.json")
+	duongDinhNgheLocations, error := LoadLocationsTemplate(duongDinhNgheLocationsPath)
 
 	if error != nil {
 		fmt.Printf("Error loading locations template: %v", error)

@@ -1,10 +1,23 @@
-package internal
+package tracker
 
 import (
+	"script-tracking-gis/internal/api"
 	"script-tracking-gis/internal/config"
-	types "script-tracking-gis/types"
+	"script-tracking-gis/types"
 	"time"
 )
+
+type Tracker struct {
+	config *config.Config
+	apiClient *api.Client
+}
+
+func NewTracker(cfg *config.Config, apiClient *api.Client) *Tracker {
+	return &Tracker{
+		config: cfg,
+		apiClient: apiClient,
+	}
+}
 
 func reverseLocations(locations *[]types.Location) {
 	for firstIndex, lastIndex := 0, len(*locations) - 1; firstIndex < lastIndex; firstIndex, lastIndex = firstIndex + 1, lastIndex -1 {
@@ -12,11 +25,10 @@ func reverseLocations(locations *[]types.Location) {
 	}
 }
 
-func PlantTracking(cfg *config.Config, scenario types.Scenario) {
+func (tracker *Tracker) Track(scenario types.Scenario) {
 	counter := 0
 	locationIndex := 0
 	isReverse := false
-	// why I can't input directly number?
 	ticker := time.NewTicker(time.Duration(scenario.DelayTime) * time.Second)
 
 	defer ticker.Stop()
@@ -36,7 +48,7 @@ func PlantTracking(cfg *config.Config, scenario types.Scenario) {
 			reverseLocations(&locations)
 		}
 
-		SendTrackingPlantData(cfg, SendTrackingPlantDataBuilder{
+		tracker.apiClient.SendTrackingPlantData(api.TrackingRequest{
 			State: scenario.Env,
 			Location: locations[locationIndex],
 			SeqNo: counter,

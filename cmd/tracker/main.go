@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
-	internal "script-tracking-gis/internal"
+	"script-tracking-gis/internal/api"
 	"script-tracking-gis/internal/config"
+	"script-tracking-gis/internal/repository"
+	"script-tracking-gis/internal/tracker"
 	"script-tracking-gis/types"
 	"sync"
 	"time"
@@ -17,12 +19,15 @@ func main() {
 		return
 	}
 
-	scenarios, error := internal.GetScenarios()
+	scenarios, error := repository.GetScenarios()
 
 	if error != nil {
 		fmt.Printf("Error getting scenarios: %v", error)
 		return
 	}
+
+	apiClient := api.NewClient(cfg)
+	tracker := tracker.NewTracker(cfg, apiClient)
 
 	var waitGroup sync.WaitGroup
 
@@ -30,11 +35,12 @@ func main() {
 		waitGroup.Add(1)
 
 		go func(scenario types.Scenario) {
-			time.Sleep(time.Duration(scenario.DelayStartTime) * time.Second)
-
 			defer waitGroup.Done()
 
-			internal.PlantTracking(cfg, scenario)
+			time.Sleep(time.Duration(scenario.DelayStartTime) * time.Second)
+
+			// internal.PlantTracking(cfg, scenario)
+			tracker.Track(scenario)
 		}(scenario)
 	}
 
