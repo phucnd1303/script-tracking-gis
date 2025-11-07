@@ -110,13 +110,13 @@ func (client *Client) SendTrackingPlantData(params TrackingRequest) error {
 	jsonData, err := json.Marshal(trackingPlantData)
 
 	if err != nil {
-		return fmt.Errorf("Error marshalling tracking plant data: %v", err)
+		return fmt.Errorf("Error marshalling tracking plant data: %w", err)
 	}
 
 	request, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(jsonData))
 
 	if err != nil {
-		return fmt.Errorf("Error creating request: %v", err)
+		return fmt.Errorf("Error creating request: %w", err)
 	}
 
 	request.Header.Set("Content-Type", "application/json")
@@ -125,7 +125,7 @@ func (client *Client) SendTrackingPlantData(params TrackingRequest) error {
 	response, err := client.httpClient.Do(request)
 
 	if err != nil {
-		return fmt.Errorf("Error sending tracking plant data: %v\n", err)
+		return fmt.Errorf("Error sending tracking plant data: %w\n", err)
 	}
 
 	defer response.Body.Close()
@@ -133,7 +133,7 @@ func (client *Client) SendTrackingPlantData(params TrackingRequest) error {
 	body, err := io.ReadAll(response.Body)
 
 	if err != nil {
-		return fmt.Errorf("Error reading response body: %v\n", err)
+		return fmt.Errorf("Error reading response body: %w\n", err)
 	}
 
 	// consider another solution to convert this data
