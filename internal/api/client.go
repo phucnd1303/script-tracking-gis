@@ -107,33 +107,33 @@ func (client *Client) SendTrackingPlantData(params TrackingRequest) error {
 		SerNo: params.SerNo,
 	})
 
-	jsonData, error := json.Marshal(trackingPlantData)
+	jsonData, err := json.Marshal(trackingPlantData)
 
-	if error != nil {
-		return fmt.Errorf("Error marshalling tracking plant data: %v", error)
+	if err != nil {
+		return fmt.Errorf("Error marshalling tracking plant data: %v", err)
 	}
 
-	request, error := http.NewRequest("POST", apiURL, bytes.NewBuffer(jsonData))
+	request, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(jsonData))
 
-	if error != nil {
-		return fmt.Errorf("Error creating request: %v", error)
+	if err != nil {
+		return fmt.Errorf("Error creating request: %v", err)
 	}
 
 	request.Header.Set("Content-Type", "application/json")
 	request.Header.Set("x-api-key", apiKey)
 	request.Header.Set("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/114.0")
-	response, error := client.httpClient.Do(request)
+	response, err := client.httpClient.Do(request)
 
-	if error != nil {
-		return fmt.Errorf("Error sending tracking plant data: %v\n", error)
+	if err != nil {
+		return fmt.Errorf("Error sending tracking plant data: %v\n", err)
 	}
 
 	defer response.Body.Close()
 
-	body, error := io.ReadAll(response.Body)
+	body, err := io.ReadAll(response.Body)
 
-	if error != nil {
-		return fmt.Errorf("Error reading response body: %v\n", error)
+	if err != nil {
+		return fmt.Errorf("Error reading response body: %v\n", err)
 	}
 
 	// consider another solution to convert this data

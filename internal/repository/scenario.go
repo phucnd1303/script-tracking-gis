@@ -18,20 +18,20 @@ const (
 )
 
 func GetScenarios() ([]types.Scenario, error) {
-	sydneyLocations, error := LoadLocationsTemplate(sydneyLocationsPath)
+	sydneyLocations, err := LoadLocationsTemplate(sydneyLocationsPath)
 
-	if error != nil {
-		fmt.Printf("Error loading locations template: %v", error)
+	if err != nil {
+		fmt.Printf("Error loading locations template: %v", err)
 
-		return nil, error
+		return nil, err
 	}
 
-	duongDinhNgheLocations, error := LoadLocationsTemplate(duongDinhNgheLocationsPath)
+	duongDinhNgheLocations, err := LoadLocationsTemplate(duongDinhNgheLocationsPath)
 
-	if error != nil {
-		fmt.Printf("Error loading locations template: %v", error)
+	if err != nil {
+		fmt.Printf("Error loading locations template: %v", err)
 
-		return nil, error
+		return nil, err
 	}
 
 	scenarios := []types.Scenario{

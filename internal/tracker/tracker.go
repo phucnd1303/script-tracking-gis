@@ -40,7 +40,6 @@ func (tracker *Tracker) Track(scenario types.Scenario) {
 			return
 		}
 
-		// locations := scenario.Locations
 		locations := make([]types.Location, len(scenario.Locations))
 		copy(locations, scenario.Locations)
 
@@ -54,8 +53,6 @@ func (tracker *Tracker) Track(scenario types.Scenario) {
 			SeqNo: counter,
 			SerNo: scenario.SerNo,
 		})
-
-		// fmt.Printf("[locationIndex %d - SerNo %s]\n", locationIndex, scenario.SerNo)
 
 		if locationIndex >= len(scenario.Locations) - 1 {
 			isReverse = true

@@ -8,19 +8,19 @@ import (
 )
 
 func LoadLocationsTemplate(path string) ([]types.Location, error) {
-	jsonFile, error := os.ReadFile(path)
+	jsonFile, err := os.ReadFile(path)
 
-	if error != nil {
-		fmt.Printf("Error opening file: %v", error)
-		return nil, error
+	if err != nil {
+		fmt.Printf("Error opening file: %v", err)
+		return nil, err
 	}
 
 	var locations []types.Location
-	error = json.Unmarshal(jsonFile, &locations)
+	err = json.Unmarshal(jsonFile, &locations)
 
-	if error != nil {
-		fmt.Printf("Error unmarshalling file: %v", error)
-		return nil, error
+	if err != nil {
+		fmt.Printf("Error unmarshalling file: %v", err)
+		return nil, err
 	}
 
 	return locations, nil

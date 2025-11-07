@@ -12,39 +12,38 @@ import (
 )
 
 func main() {
-	cfg, error := config.NewConfig()
+	cfg, err := config.NewConfig()
 
-	if error != nil {
-		fmt.Printf("Error loading .env file: %v", error)
+	if err != nil {
+		fmt.Printf("Error loading .env file: %v", err)
 		return
 	}
 
-	scenarios, error := repository.GetScenarios()
+	scenarios, err := repository.GetScenarios()
 
-	if error != nil {
-		fmt.Printf("Error getting scenarios: %v", error)
+	if err != nil {
+		fmt.Printf("Error getting scenarios: %v", err)
 		return
 	}
 
 	apiClient := api.NewClient(cfg)
 	tracker := tracker.NewTracker(cfg, apiClient)
 
-	var waitGroup sync.WaitGroup
+	var wg sync.WaitGroup
 
 	for _, scenario := range scenarios {
-		waitGroup.Add(1)
+		wg.Add(1)
 
 		go func(scenario types.Scenario) {
-			defer waitGroup.Done()
+			defer wg.Done()
 
 			time.Sleep(time.Duration(scenario.DelayStartTime) * time.Second)
 
-			// internal.PlantTracking(cfg, scenario)
 			tracker.Track(scenario)
 		}(scenario)
 	}
 
-	waitGroup.Wait()
+	wg.Wait()
 
 	fmt.Println("All scenarios completed")
 }
