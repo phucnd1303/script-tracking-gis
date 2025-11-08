@@ -1,6 +1,5 @@
 package types
 
-
 type Scenario struct {
 	Env string
 	SerNo string

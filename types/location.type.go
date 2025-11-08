@@ -1,9 +1,9 @@
 package types
 
 type Location struct {
-	Latitude  string `json:"lat"`
+	Latitude string `json:"lat"`
 	Longitude string `json:"log"`
-	Speed     *string `json:"speed"`
+	Speed *string `json:"speed"`
 }
 
 type PlantGPSDataField struct {

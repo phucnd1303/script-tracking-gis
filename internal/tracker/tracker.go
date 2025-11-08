@@ -1,6 +1,8 @@
 package tracker
 
 import (
+	"context"
+	"fmt"
 	"script-tracking-gis/internal/api"
 	"script-tracking-gis/internal/config"
 	"script-tracking-gis/types"
@@ -25,7 +27,7 @@ func reverseLocations(locations *[]types.Location) {
 	}
 }
 
-func (tracker *Tracker) Track(scenario types.Scenario) {
+func (tracker *Tracker) Track(ctx context.Context, scenario types.Scenario) error {
 	counter := 0
 	locationIndex := 0
 	isReverse := false
@@ -33,32 +35,45 @@ func (tracker *Tracker) Track(scenario types.Scenario) {
 
 	defer ticker.Stop()
 
-	for range ticker.C {
-		counter++
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-ticker.C:
+			counter++
 
-		if counter >= scenario.TotalTime {
-			return
-		}
+			if counter >= scenario.TotalTime {
+				return nil
+			}
 
-		locations := make([]types.Location, len(scenario.Locations))
-		copy(locations, scenario.Locations)
+			locations := make([]types.Location, len(scenario.Locations))
+			copy(locations, scenario.Locations)
 
-		if isReverse {
-			reverseLocations(&locations)
-		}
+			if isReverse {
+				reverseLocations(&locations)
+			}
 
-		tracker.apiClient.SendTrackingPlantData(api.TrackingRequest{
-			State: scenario.Env,
-			Location: locations[locationIndex],
-			SeqNo: counter,
-			SerNo: scenario.SerNo,
-		})
+			err := tracker.apiClient.SendTrackingPlantData(ctx, api.TrackingRequest{
+				State:    scenario.Env,
+				Location: locations[locationIndex],
+				SeqNo:    counter,
+				SerNo:    scenario.SerNo,
+			})
 
-		if locationIndex >= len(scenario.Locations) - 1 {
-			isReverse = true
-			locationIndex = 0
-		} else {
-			locationIndex++
+			if err != nil {
+				if err == context.Canceled {
+					return err
+				}
+
+			  return fmt.Errorf("error sending tracking plant data: %w", err)
+			}
+
+			if locationIndex >= len(scenario.Locations)-1 {
+				isReverse = true
+				locationIndex = 0
+			} else {
+				locationIndex++
+			}
 		}
 	}
 }

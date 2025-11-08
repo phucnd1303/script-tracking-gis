@@ -7,13 +7,13 @@ import (
 
 const (
 	stageLocal = "local"
-	stageDEV = "dev"
-	stageUAT = "uat"
-	stageSIT = "sit"
+	stageDEV   = "dev"
+	stageUAT   = "uat"
+	stageSIT   = "sit"
 )
 
 const (
-	sydneyLocationsPath = "templates/australia/sydney.json"
+	sydneyLocationsPath        = "templates/australia/sydney.json"
 	duongDinhNgheLocationsPath = "templates/vietnam/duong-dinh-nghe.danang.json"
 )
 
@@ -36,19 +36,19 @@ func GetScenarios() ([]types.Scenario, error) {
 
 	scenarios := []types.Scenario{
 		{
-			Env: stageLocal,
-			SerNo: "1234567890",
-			Locations: sydneyLocations,
-			DelayTime: 3,
-			TotalTime: 200,
+			Env:            stageLocal,
+			SerNo:          "1234567890",
+			Locations:      sydneyLocations,
+			DelayTime:      3,
+			TotalTime:      200,
 			DelayStartTime: 0,
 		},
 		{
-			Env: stageLocal,
-			SerNo: "111111",
-			Locations: duongDinhNgheLocations,
-			DelayTime: 1,
-			TotalTime: 200,
+			Env:            stageLocal,
+			SerNo:          "111111",
+			Locations:      duongDinhNgheLocations,
+			DelayTime:      1,
+			TotalTime:      200,
 			DelayStartTime: 5,
 		},
 	}

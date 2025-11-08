@@ -2,6 +2,7 @@ package api
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -13,23 +14,23 @@ import (
 )
 
 type Client struct {
-	config *config.Config
+	config     *config.Config
 	httpClient *http.Client
 }
 
 type TrackingRequest struct {
-	State string
+	State    string
 	Location types.Location
-	SeqNo int
-	SerNo string
+	SeqNo    int
+	SerNo    string
 }
 
 type BuildTrackingPlantDataBuilder struct {
-	Latitude  string `json:"lat"`
-	Longitude string `json:"log"`
+	Latitude  string  `json:"lat"`
+	Longitude string  `json:"log"`
 	Speed     *string `json:"speed"`
-	SeqNo int
-	SerNo string
+	SeqNo     int
+	SerNo     string
 }
 
 func NewClient(cfg *config.Config) *Client {
@@ -44,39 +45,39 @@ func NewClient(cfg *config.Config) *Client {
 func buildTrackingPlantData(params BuildTrackingPlantDataBuilder) types.TrackingPlantData {
 	currentTime := time.Now().UTC().Format(time.RFC3339Nano)
 	trackingPlantData := types.TrackingPlantData{
-		SerNo: params.SerNo,
-		IMEI: params.SerNo,
+		SerNo:  params.SerNo,
+		IMEI:   params.SerNo,
 		ProdId: 1,
-		FW: "1.1.1.1",
+		FW:     "1.1.1.1",
 		Records: []types.TrackingPlantDataRecord{
 			{
-				SeqNo: params.SeqNo,
-				Reason: 1,
+				SeqNo:   params.SeqNo,
+				Reason:  1,
 				DateUTC: currentTime,
 				Fields: []any{
 					types.PlantGPSDataField{
-						GpsUTC: currentTime,
-						Lat: params.Latitude,
-						Long: params.Longitude,
-						Alt: 18,
-						Spd: utils.ConvertKMHToMS(50),
-						SpdAcc: 2,
-						Head: 159,
-						PDOP: 28,
-						PosAcc: 6,
+						GpsUTC:  currentTime,
+						Lat:     params.Latitude,
+						Long:    params.Longitude,
+						Alt:     18,
+						Spd:     utils.ConvertKMHToMS(50),
+						SpdAcc:  2,
+						Head:    159,
+						PDOP:    28,
+						PosAcc:  6,
 						GpsStat: 3,
-						FType: 0,
+						FType:   0,
 					},
 					types.PlantOdoField{
-						Odo: 111,
-						RH: 12345,
+						Odo:   111,
+						RH:    12345,
 						FType: 1,
 					},
 					types.PlantDeviceField{
-						DIn: 0,
-						DOut: 0,
+						DIn:     0,
+						DOut:    0,
 						DevStat: 2,
-						FType: 2,
+						FType:   2,
 					},
 					types.PlantAnalogueDataField{
 						AnalogueData: map[int]int{
@@ -96,27 +97,27 @@ func buildTrackingPlantData(params BuildTrackingPlantDataBuilder) types.Tracking
 	return trackingPlantData
 }
 
-func (client *Client) SendTrackingPlantData(params TrackingRequest) error {
+func (client *Client) SendTrackingPlantData(ctx context.Context, params TrackingRequest) error {
 	apiURL := client.config.GetAPIURL(params.State)
 	apiKey := client.config.GetAPIKey(params.State)
 	trackingPlantData := buildTrackingPlantData(BuildTrackingPlantDataBuilder{
-		Latitude: params.Location.Latitude,
+		Latitude:  params.Location.Latitude,
 		Longitude: params.Location.Longitude,
-		Speed: params.Location.Speed,
-		SeqNo: params.SeqNo,
-		SerNo: params.SerNo,
+		Speed:     params.Location.Speed,
+		SeqNo:     params.SeqNo,
+		SerNo:     params.SerNo,
 	})
 
 	jsonData, err := json.Marshal(trackingPlantData)
 
 	if err != nil {
-		return fmt.Errorf("Error marshalling tracking plant data: %w", err)
+		return fmt.Errorf("error marshalling tracking plant data: %w", err)
 	}
 
-	request, err := http.NewRequest("POST", apiURL, bytes.NewBuffer(jsonData))
+	request, err := http.NewRequestWithContext(ctx, "POST", apiURL, bytes.NewBuffer(jsonData))
 
 	if err != nil {
-		return fmt.Errorf("Error creating request: %w", err)
+		return fmt.Errorf("error creating request: %w", err)
 	}
 
 	request.Header.Set("Content-Type", "application/json")
@@ -125,7 +126,11 @@ func (client *Client) SendTrackingPlantData(params TrackingRequest) error {
 	response, err := client.httpClient.Do(request)
 
 	if err != nil {
-		return fmt.Errorf("Error sending tracking plant data: %w\n", err)
+		if ctx.Err() != nil {
+			return fmt.Errorf("request cancelled: %w", ctx.Err())
+		}
+
+		return fmt.Errorf("error sending tracking plant data: %w", err)
 	}
 
 	defer response.Body.Close()
@@ -133,7 +138,7 @@ func (client *Client) SendTrackingPlantData(params TrackingRequest) error {
 	body, err := io.ReadAll(response.Body)
 
 	if err != nil {
-		return fmt.Errorf("Error reading response body: %w\n", err)
+		return fmt.Errorf("error reading response body: %w", err)
 	}
 
 	// consider another solution to convert this data

@@ -14,21 +14,21 @@ type Config struct {
 
 func NewConfig() (*Config, error) {
 	if err := godotenv.Load(); err != nil {
-		return nil, fmt.Errorf("Error loading .env file: %v", err)
+		return nil, fmt.Errorf("error loading .env file: %w", err)
 	}
 
 	return &Config{
-		APIKeys: map[string]string {
+		APIKeys: map[string]string{
 			"local": os.Getenv("API_KEY_LOCAL"),
-			"dev": os.Getenv("API_KEY_DEV"),
-			"uat": os.Getenv("API_KEY_UAT"),
-			"sit": os.Getenv("API_KEY_SIT"),
+			"dev":   os.Getenv("API_KEY_DEV"),
+			"uat":   os.Getenv("API_KEY_UAT"),
+			"sit":   os.Getenv("API_KEY_SIT"),
 		},
-		APIURLs: map[string]string {
+		APIURLs: map[string]string{
 			"local": os.Getenv("API_URL_PLANT_LOCAL"),
-			"dev": os.Getenv("API_URL_PLANT_DEV"),
-			"uat": os.Getenv("API_URL_PLANT_UAT"),
-			"sit": os.Getenv("API_URL_PLANT_SIT"),
+			"dev":   os.Getenv("API_URL_PLANT_DEV"),
+			"uat":   os.Getenv("API_URL_PLANT_UAT"),
+			"sit":   os.Getenv("API_URL_PLANT_SIT"),
 		},
 	}, nil
 }
