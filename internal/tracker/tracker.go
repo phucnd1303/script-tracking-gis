@@ -53,7 +53,7 @@ func (tracker *Tracker) Track(ctx context.Context, scenario types.Scenario) erro
 				reverseLocations(&locations)
 			}
 
-			err := tracker.apiClient.SendTrackingPlantData(ctx, api.TrackingRequest{
+			_, err := tracker.apiClient.SendTrackingPlantData(ctx, api.TrackingRequest{
 				State:    scenario.Env,
 				Location: locations[locationIndex],
 				SeqNo:    counter,
@@ -66,7 +66,11 @@ func (tracker *Tracker) Track(ctx context.Context, scenario types.Scenario) erro
 				}
 
 			  return fmt.Errorf("error sending tracking plant data: %w", err)
-			}
+			} 
+			// else {
+			// 	fmt.Printf("Response-body: %s\n", res.Body)
+			// 	fmt.Printf("Response-status: %d\n", res.StatusCode)
+			// }
 
 			if locationIndex >= len(scenario.Locations)-1 {
 				isReverse = true

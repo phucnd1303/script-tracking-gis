@@ -25,6 +25,11 @@ type TrackingRequest struct {
 	SerNo    string
 }
 
+type APIResponse struct {
+	Body string
+	StatusCode int
+}
+
 type BuildTrackingPlantDataBuilder struct {
 	Latitude  string  `json:"lat"`
 	Longitude string  `json:"log"`
@@ -97,7 +102,7 @@ func buildTrackingPlantData(params BuildTrackingPlantDataBuilder) types.Tracking
 	return trackingPlantData
 }
 
-func (client *Client) SendTrackingPlantData(ctx context.Context, params TrackingRequest) error {
+func (client *Client) SendTrackingPlantData(ctx context.Context, params TrackingRequest) (*APIResponse, error) {
 	apiURL := client.config.GetAPIURL(params.State)
 	apiKey := client.config.GetAPIKey(params.State)
 	trackingPlantData := buildTrackingPlantData(BuildTrackingPlantDataBuilder{
@@ -111,13 +116,13 @@ func (client *Client) SendTrackingPlantData(ctx context.Context, params Tracking
 	jsonData, err := json.Marshal(trackingPlantData)
 
 	if err != nil {
-		return fmt.Errorf("error marshalling tracking plant data: %w", err)
+		return nil, fmt.Errorf("error marshalling tracking plant data: %w", err)
 	}
 
 	request, err := http.NewRequestWithContext(ctx, "POST", apiURL, bytes.NewBuffer(jsonData))
 
 	if err != nil {
-		return fmt.Errorf("error creating request: %w", err)
+		return nil, fmt.Errorf("error creating request: %w", err)
 	}
 
 	request.Header.Set("Content-Type", "application/json")
@@ -127,10 +132,10 @@ func (client *Client) SendTrackingPlantData(ctx context.Context, params Tracking
 
 	if err != nil {
 		if ctx.Err() != nil {
-			return fmt.Errorf("request cancelled: %w", ctx.Err())
+			return nil, fmt.Errorf("request cancelled: %w", ctx.Err())
 		}
 
-		return fmt.Errorf("error sending tracking plant data: %w", err)
+		return nil, fmt.Errorf("error sending tracking plant data: %w", err)
 	}
 
 	defer response.Body.Close()
@@ -138,12 +143,11 @@ func (client *Client) SendTrackingPlantData(ctx context.Context, params Tracking
 	body, err := io.ReadAll(response.Body)
 
 	if err != nil {
-		return fmt.Errorf("error reading response body: %w", err)
+		return nil, fmt.Errorf("error reading response body: %w", err)
 	}
 
-	// consider another solution to convert this data
-	fmt.Printf("Response-body: %s\n", string(body))
-	fmt.Printf("Response-status: %d\n", response.StatusCode)
-
-	return nil
+	return &APIResponse{
+		Body: string(body),
+		StatusCode: response.StatusCode,
+	}, nil
 }
