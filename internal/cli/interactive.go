@@ -5,16 +5,19 @@ import (
 	"fmt"
 	"os"
 	"script-tracking-gis/internal/controller"
+	"script-tracking-gis/internal/monitor"
 	"strings"
 )
 
 type InteractiveCLI struct {
 	controller *controller.TrackerController
+	sm *monitor.SystemMonitor
 }
 
-func NewInteractiveCLI(controller *controller.TrackerController) *InteractiveCLI {
+func NewInteractiveCLI(controller *controller.TrackerController, sm *monitor.SystemMonitor) *InteractiveCLI {
 	return &InteractiveCLI{
 		controller: controller,
+		sm: sm,
 	}
 }
 
@@ -23,6 +26,7 @@ func (cli *InteractiveCLI) Start() {
 
 	fmt.Println("\n📟 Interactive Mode Commands:")
 	fmt.Println("  list              - List active trackers")
+	fmt.Println("  monitor           - Monitor system metrics")
 	fmt.Println("  stop <SerNo>      - Stop specific tracker")
 	fmt.Println("  stopall           - Stop all trackers")
 	fmt.Println("  quit              - Stop all and exit")
@@ -48,6 +52,10 @@ func (cli *InteractiveCLI) manageCommand(command string) {
 	switch parts[0] {
 	case "list":
 		cli.controller.ListTrackers()
+	
+	case "monitor":
+		metrics := cli.sm.GetMetrics()
+		cli.sm.PrintMetrics(metrics)
 
 	case "stop":
 		if len(parts) < 2 {
@@ -68,6 +76,7 @@ func (cli *InteractiveCLI) manageCommand(command string) {
 	case "help", "?":
 		fmt.Println("\n📟 Available Commands:")
 		fmt.Println("  list              - List active trackers")
+		fmt.Println("  monitor           - Monitor system metrics")
 		fmt.Println("  stop <SerNo>      - Stop specific tracker")
 		fmt.Println("  stopall           - Stop all trackers")
 		fmt.Println("  quit              - Stop all and exit")

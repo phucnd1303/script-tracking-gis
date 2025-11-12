@@ -9,6 +9,7 @@ import (
 	"script-tracking-gis/internal/cli"
 	"script-tracking-gis/internal/config"
 	"script-tracking-gis/internal/controller"
+	"script-tracking-gis/internal/monitor"
 	"script-tracking-gis/internal/repository"
 	"script-tracking-gis/internal/tracker"
 	"script-tracking-gis/types"
@@ -22,6 +23,7 @@ type Application struct {
 	controller *controller.TrackerController
 	tracker *tracker.Tracker
 	cli *cli.InteractiveCLI
+	sm *monitor.SystemMonitor
 	globalCtx context.Context
 	globalCancel context.CancelFunc
 }
@@ -36,7 +38,8 @@ func New() (*Application, error) {
 	apiClient := api.NewClient(cfg)
 	tracker := tracker.NewTracker(cfg, apiClient)
 	tc := controller.NewTrackerController()
-	cli := cli.NewInteractiveCLI(tc)
+	sm := monitor.NewSystemMonitor()
+	cli := cli.NewInteractiveCLI(tc, sm)
 	globalCtx, globalCancel := context.WithCancel(context.Background())
 
 	return &Application{
@@ -44,12 +47,13 @@ func New() (*Application, error) {
 		controller: tc,
 		tracker: tracker,
 		cli: cli,
+		sm: sm,
 		globalCtx: globalCtx,
 		globalCancel: globalCancel,
 	}, nil
 }
 
-func (app *Application) setupSignal() {
+func (app *Application) shutdown() {
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 
@@ -64,8 +68,9 @@ func (app *Application) setupSignal() {
 
 func (app *Application) Run() error {
 	app.cli.Start()
+	app.shutdown()
 
-	app.setupSignal()
+	go app.sm.StartAutoMonitor(app.globalCtx, 10*time.Second)
 
 	scenarios, err := repository.GetScenarios()
 
