@@ -66,11 +66,7 @@ func (tracker *Tracker) Track(ctx context.Context, scenario types.Scenario) erro
 				}
 
 			  return fmt.Errorf("error sending tracking plant data: %w", err)
-			} 
-			// else {
-			// 	fmt.Printf("Response-body: %s\n", res.Body)
-			// 	fmt.Printf("Response-status: %d\n", res.StatusCode)
-			// }
+			}
 
 			if locationIndex >= len(scenario.Locations)-1 {
 				isReverse = true
