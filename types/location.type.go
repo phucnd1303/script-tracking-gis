@@ -2,7 +2,7 @@ package types
 
 type Location struct {
 	Latitude  string  `json:"lat"`
-	Longitude string  `json:"log"`
+	Longitude string  `json:"long"`
 	Speed     *string `json:"speed"`
 }
 
