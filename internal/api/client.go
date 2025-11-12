@@ -26,7 +26,7 @@ type TrackingRequest struct {
 }
 
 type APIResponse struct {
-	Body string
+	Body       string
 	StatusCode int
 }
 
@@ -147,7 +147,7 @@ func (client *Client) SendTrackingPlantData(ctx context.Context, params Tracking
 	}
 
 	return &APIResponse{
-		Body: string(body),
+		Body:       string(body),
 		StatusCode: response.StatusCode,
 	}, nil
 }

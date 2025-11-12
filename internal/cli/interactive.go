@@ -11,13 +11,13 @@ import (
 
 type InteractiveCLI struct {
 	controller *controller.TrackerController
-	sm *monitor.SystemMonitor
+	sm         *monitor.SystemMonitor
 }
 
 func NewInteractiveCLI(controller *controller.TrackerController, sm *monitor.SystemMonitor) *InteractiveCLI {
 	return &InteractiveCLI{
 		controller: controller,
-		sm: sm,
+		sm:         sm,
 	}
 }
 
@@ -32,7 +32,7 @@ func (cli *InteractiveCLI) Start() {
 	fmt.Println("  quit              - Stop all and exit")
 	fmt.Println()
 	fmt.Print("> ")
-	
+
 	go func() {
 		for scanner.Scan() {
 			command := strings.TrimSpace(scanner.Text())
@@ -52,7 +52,7 @@ func (cli *InteractiveCLI) manageCommand(command string) {
 	switch parts[0] {
 	case "list":
 		cli.controller.ListTrackers()
-	
+
 	case "monitor":
 		metrics := cli.sm.GetMetrics()
 		cli.sm.PrintMetrics(metrics)

@@ -10,19 +10,19 @@ import (
 )
 
 type Tracker struct {
-	config *config.Config
+	config    *config.Config
 	apiClient *api.Client
 }
 
 func NewTracker(cfg *config.Config, apiClient *api.Client) *Tracker {
 	return &Tracker{
-		config: cfg,
+		config:    cfg,
 		apiClient: apiClient,
 	}
 }
 
 func reverseLocations(locations *[]types.Location) {
-	for firstIndex, lastIndex := 0, len(*locations) - 1; firstIndex < lastIndex; firstIndex, lastIndex = firstIndex + 1, lastIndex -1 {
+	for firstIndex, lastIndex := 0, len(*locations)-1; firstIndex < lastIndex; firstIndex, lastIndex = firstIndex+1, lastIndex-1 {
 		(*locations)[firstIndex], (*locations)[lastIndex] = (*locations)[lastIndex], (*locations)[firstIndex]
 	}
 }
@@ -65,7 +65,7 @@ func (tracker *Tracker) Track(ctx context.Context, scenario types.Scenario) erro
 					return err
 				}
 
-			  return fmt.Errorf("error sending tracking plant data: %w", err)
+				return fmt.Errorf("error sending tracking plant data: %w", err)
 			}
 
 			if locationIndex >= len(scenario.Locations)-1 {

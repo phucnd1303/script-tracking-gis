@@ -19,12 +19,12 @@ import (
 )
 
 type Application struct {
-	config *config.Config
-	controller *controller.TrackerController
-	tracker *tracker.Tracker
-	cli *cli.InteractiveCLI
-	sm *monitor.SystemMonitor
-	globalCtx context.Context
+	config       *config.Config
+	controller   *controller.TrackerController
+	tracker      *tracker.Tracker
+	cli          *cli.InteractiveCLI
+	sm           *monitor.SystemMonitor
+	globalCtx    context.Context
 	globalCancel context.CancelFunc
 }
 
@@ -43,12 +43,12 @@ func New() (*Application, error) {
 	globalCtx, globalCancel := context.WithCancel(context.Background())
 
 	return &Application{
-		config: cfg,
-		controller: tc,
-		tracker: tracker,
-		cli: cli,
-		sm: sm,
-		globalCtx: globalCtx,
+		config:       cfg,
+		controller:   tc,
+		tracker:      tracker,
+		cli:          cli,
+		sm:           sm,
+		globalCtx:    globalCtx,
 		globalCancel: globalCancel,
 	}, nil
 }

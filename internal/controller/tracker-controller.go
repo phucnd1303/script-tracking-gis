@@ -8,7 +8,7 @@ import (
 
 type TrackerController struct {
 	cancels map[string]context.CancelFunc
-	mu sync.RWMutex
+	mu      sync.RWMutex
 }
 
 func NewTrackerController() *TrackerController {
@@ -50,7 +50,7 @@ func (tc *TrackerController) StopTracker(serNo string) bool {
 
 	if cancel, ok := tc.cancels[serNo]; ok {
 		cancel()
-	  delete(tc.cancels, serNo)
+		delete(tc.cancels, serNo)
 
 		return true
 	}
