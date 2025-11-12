@@ -28,7 +28,7 @@ type Application struct {
 	globalCancel context.CancelFunc
 }
 
-func New() (*Application, error) {
+func NewApplication() (*Application, error) {
 	cfg, err := config.NewConfig()
 
 	if err != nil {

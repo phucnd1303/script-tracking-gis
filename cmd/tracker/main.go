@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	application, err := app.New()
+	application, err := app.NewApplication()
 
 	if err != nil {
 		fmt.Printf("Error creating application: %v", err)
