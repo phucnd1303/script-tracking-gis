@@ -22,8 +22,8 @@ type Application struct {
 	controller *controller.TrackerController
 	tracker *tracker.Tracker
 	cli *cli.InteractiveCLI
-	context context.Context
-	cancel context.CancelFunc
+	globalCtx context.Context
+	globalCancel context.CancelFunc
 }
 
 func New() (*Application, error) {
@@ -44,8 +44,8 @@ func New() (*Application, error) {
 		controller: tc,
 		tracker: tracker,
 		cli: cli,
-		context: globalCtx,
-		cancel: globalCancel,
+		globalCtx: globalCtx,
+		globalCancel: globalCancel,
 	}, nil
 }
 
@@ -58,7 +58,7 @@ func (app *Application) setupSignal() {
 		fmt.Printf("\n🛑 Received signal: %v\n", sig)
 		fmt.Println("⏳ Initiating graceful shutdown...")
 		app.controller.StopAllTrackers()
-		app.cancel()
+		app.globalCancel()
 	}()
 }
 
@@ -81,7 +81,7 @@ func (app *Application) Run() error {
 		go func(scenario types.Scenario) {
 			defer wg.Done()
 
-			trackerCtx, trackerCancel := context.WithCancel(app.context)
+			trackerCtx, trackerCancel := context.WithCancel(app.globalCtx)
 			defer trackerCancel()
 
 			app.controller.AddTracker(scenario.SerNo, trackerCancel)
