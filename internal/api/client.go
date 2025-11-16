@@ -30,12 +30,59 @@ type APIResponse struct {
 	StatusCode int
 }
 
-type BuildTrackingPlantDataBuilder struct {
+type BuildTrackingPlantDataParams struct {
 	Latitude  string  `json:"lat"`
 	Longitude string  `json:"log"`
 	Speed     *string `json:"speed"`
 	SeqNo     int
 	SerNo     string
+}
+
+type PlantGPSDataField struct {
+	GpsUTC  string
+	Lat     string
+	Long    string
+	Alt     int
+	Spd     float64
+	SpdAcc  int
+	Head    int
+	PDOP    int
+	PosAcc  int
+	GpsStat int
+	FType   int
+}
+
+type PlantOdoField struct {
+	Odo   int
+	RH    int
+	FType int
+}
+
+type PlantDeviceField struct {
+	DIn     int
+	DOut    int
+	DevStat int
+	FType   int
+}
+
+type PlantAnalogueDataField struct {
+	AnalogueData map[int]int
+	FType        int
+}
+
+type TrackingPlantDataRecord struct {
+	SeqNo   int
+	Reason  int
+	DateUTC string
+	Fields  []any
+}
+
+type TrackingPlantData struct {
+	SerNo   string
+	IMEI    string
+	ProdId  int
+	FW      string
+	Records []TrackingPlantDataRecord
 }
 
 func NewClient(cfg *config.Config) *Client {
@@ -47,7 +94,7 @@ func NewClient(cfg *config.Config) *Client {
 	}
 }
 
-func buildTrackingPlantData(params BuildTrackingPlantDataBuilder) (types.TrackingPlantData, error) {
+func buildTrackingPlantData(params BuildTrackingPlantDataParams) (TrackingPlantData, error) {
 	speed := "50"
 
 	if params.Speed != nil {
@@ -57,22 +104,22 @@ func buildTrackingPlantData(params BuildTrackingPlantDataBuilder) (types.Trackin
 	kmhSpeed, err := utils.ConvertKMHToCMS(speed)
 
 	if err != nil {
-		return types.TrackingPlantData{}, err
+		return TrackingPlantData{}, err
 	}
 
 	currentTime := time.Now().UTC().Format(time.RFC3339Nano)
-	trackingPlantData := types.TrackingPlantData{
+	trackingPlantData := TrackingPlantData{
 		SerNo:  params.SerNo,
 		IMEI:   params.SerNo,
 		ProdId: 1,
 		FW:     "1.1.1.1",
-		Records: []types.TrackingPlantDataRecord{
+		Records: []TrackingPlantDataRecord{
 			{
 				SeqNo:   params.SeqNo,
 				Reason:  1,
 				DateUTC: currentTime,
 				Fields: []any{
-					types.PlantGPSDataField{
+					PlantGPSDataField{
 						GpsUTC:  currentTime,
 						Lat:     params.Latitude,
 						Long:    params.Longitude,
@@ -85,18 +132,18 @@ func buildTrackingPlantData(params BuildTrackingPlantDataBuilder) (types.Trackin
 						GpsStat: 3,
 						FType:   0,
 					},
-					types.PlantOdoField{
+					PlantOdoField{
 						Odo:   111,
 						RH:    12345,
 						FType: 1,
 					},
-					types.PlantDeviceField{
+					PlantDeviceField{
 						DIn:     0,
 						DOut:    0,
 						DevStat: 2,
 						FType:   2,
 					},
-					types.PlantAnalogueDataField{
+					PlantAnalogueDataField{
 						AnalogueData: map[int]int{
 							4: utils.RandomNumberFromRange(15, 28),
 							1: 4144,
@@ -117,7 +164,7 @@ func buildTrackingPlantData(params BuildTrackingPlantDataBuilder) (types.Trackin
 func (client *Client) SendTrackingPlantData(ctx context.Context, params TrackingRequest) (*APIResponse, error) {
 	apiURL := client.config.GetAPIURL(params.State)
 	apiKey := client.config.GetAPIKey(params.State)
-	trackingPlantData, err := buildTrackingPlantData(BuildTrackingPlantDataBuilder{
+	trackingPlantData, err := buildTrackingPlantData(BuildTrackingPlantDataParams{
 		Latitude:  params.Location.Latitude,
 		Longitude: params.Location.Longitude,
 		Speed:     params.Location.Speed,
