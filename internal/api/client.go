@@ -47,7 +47,19 @@ func NewClient(cfg *config.Config) *Client {
 	}
 }
 
-func buildTrackingPlantData(params BuildTrackingPlantDataBuilder) types.TrackingPlantData {
+func buildTrackingPlantData(params BuildTrackingPlantDataBuilder) (types.TrackingPlantData, error) {
+	speed := "50"
+
+	if params.Speed != nil {
+		speed = *params.Speed
+	}
+
+	kmhSpeed, err := utils.ConvertKMHToCMS(speed)
+
+	if err != nil {
+		return types.TrackingPlantData{}, err
+	}
+
 	currentTime := time.Now().UTC().Format(time.RFC3339Nano)
 	trackingPlantData := types.TrackingPlantData{
 		SerNo:  params.SerNo,
@@ -65,7 +77,7 @@ func buildTrackingPlantData(params BuildTrackingPlantDataBuilder) types.Tracking
 						Lat:     params.Latitude,
 						Long:    params.Longitude,
 						Alt:     18,
-						Spd:     utils.ConvertKMHToMS(50),
+						Spd:     kmhSpeed,
 						SpdAcc:  2,
 						Head:    159,
 						PDOP:    28,
@@ -99,19 +111,23 @@ func buildTrackingPlantData(params BuildTrackingPlantDataBuilder) types.Tracking
 		},
 	}
 
-	return trackingPlantData
+	return trackingPlantData, nil
 }
 
 func (client *Client) SendTrackingPlantData(ctx context.Context, params TrackingRequest) (*APIResponse, error) {
 	apiURL := client.config.GetAPIURL(params.State)
 	apiKey := client.config.GetAPIKey(params.State)
-	trackingPlantData := buildTrackingPlantData(BuildTrackingPlantDataBuilder{
+	trackingPlantData, err := buildTrackingPlantData(BuildTrackingPlantDataBuilder{
 		Latitude:  params.Location.Latitude,
 		Longitude: params.Location.Longitude,
 		Speed:     params.Location.Speed,
 		SeqNo:     params.SeqNo,
 		SerNo:     params.SerNo,
 	})
+
+	if err != nil {
+		return nil, fmt.Errorf("error building tracking plant data: %w", err)
+	}
 
 	jsonData, err := json.Marshal(trackingPlantData)
 

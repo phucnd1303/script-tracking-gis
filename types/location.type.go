@@ -11,7 +11,7 @@ type PlantGPSDataField struct {
 	Lat     string
 	Long    string
 	Alt     int
-	Spd     float32
+	Spd     float64
 	SpdAcc  int
 	Head    int
 	PDOP    int
