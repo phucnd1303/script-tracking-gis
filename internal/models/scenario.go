@@ -1,4 +1,4 @@
-package types
+package models
 
 type Scenario struct {
 	Env            string

@@ -7,7 +7,7 @@ import (
 
 	"github.com/phucnd1303/script-tracking-gis/internal/api"
 	"github.com/phucnd1303/script-tracking-gis/internal/config"
-	"github.com/phucnd1303/script-tracking-gis/types"
+	"github.com/phucnd1303/script-tracking-gis/internal/models"
 )
 
 type Tracker struct {
@@ -22,13 +22,13 @@ func NewTracker(cfg *config.Config, apiClient *api.Client) *Tracker {
 	}
 }
 
-func reverseLocations(locations *[]types.Location) {
+func reverseLocations(locations *[]models.Location) {
 	for firstIndex, lastIndex := 0, len(*locations)-1; firstIndex < lastIndex; firstIndex, lastIndex = firstIndex+1, lastIndex-1 {
 		(*locations)[firstIndex], (*locations)[lastIndex] = (*locations)[lastIndex], (*locations)[firstIndex]
 	}
 }
 
-func (tracker *Tracker) Track(ctx context.Context, scenario types.Scenario) error {
+func (tracker *Tracker) Track(ctx context.Context, scenario models.Scenario) error {
 	counter := 0
 	locationIndex := 0
 	isReverse := false
@@ -47,7 +47,7 @@ func (tracker *Tracker) Track(ctx context.Context, scenario types.Scenario) erro
 				return nil
 			}
 
-			locations := make([]types.Location, len(scenario.Locations))
+			locations := make([]models.Location, len(scenario.Locations))
 			copy(locations, scenario.Locations)
 
 			if isReverse {

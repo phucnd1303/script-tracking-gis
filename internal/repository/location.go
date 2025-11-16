@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"os"
 
-	types "github.com/phucnd1303/script-tracking-gis/types"
+	"github.com/phucnd1303/script-tracking-gis/internal/models"
 )
 
-func LoadLocationsTemplate(path string) ([]types.Location, error) {
+func LoadLocationsTemplate(path string) ([]models.Location, error) {
 	jsonFile, err := os.ReadFile(path)
 
 	if err != nil {
@@ -16,7 +16,7 @@ func LoadLocationsTemplate(path string) ([]types.Location, error) {
 		return nil, err
 	}
 
-	var locations []types.Location
+	var locations []models.Location
 	err = json.Unmarshal(jsonFile, &locations)
 
 	if err != nil {

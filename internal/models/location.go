@@ -1,4 +1,4 @@
-package types
+package models
 
 type Location struct {
 	Latitude  string  `json:"lat"`

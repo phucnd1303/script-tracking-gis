@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/phucnd1303/script-tracking-gis/internal/config"
+	"github.com/phucnd1303/script-tracking-gis/internal/models"
 	"github.com/phucnd1303/script-tracking-gis/pkg/utils"
-	"github.com/phucnd1303/script-tracking-gis/types"
 )
 
 type Client struct {
@@ -22,7 +22,7 @@ type Client struct {
 
 type TrackingRequest struct {
 	State    string
-	Location types.Location
+	Location models.Location
 	SeqNo    int
 	SerNo    string
 }

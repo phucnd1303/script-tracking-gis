@@ -13,10 +13,10 @@ import (
 	"github.com/phucnd1303/script-tracking-gis/internal/cli"
 	"github.com/phucnd1303/script-tracking-gis/internal/config"
 	"github.com/phucnd1303/script-tracking-gis/internal/controller"
+	"github.com/phucnd1303/script-tracking-gis/internal/models"
 	"github.com/phucnd1303/script-tracking-gis/internal/monitor"
 	"github.com/phucnd1303/script-tracking-gis/internal/repository"
 	"github.com/phucnd1303/script-tracking-gis/internal/tracker"
-	"github.com/phucnd1303/script-tracking-gis/types"
 )
 
 type Application struct {
@@ -83,7 +83,7 @@ func (app *Application) Run() error {
 	for _, scenario := range scenarios {
 		wg.Add(1)
 
-		go func(scenario types.Scenario) {
+		go func(scenario models.Scenario) {
 			defer wg.Done()
 
 			trackerCtx, trackerCancel := context.WithCancel(app.globalCtx)
