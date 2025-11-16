@@ -3,10 +3,11 @@ package tracker
 import (
 	"context"
 	"fmt"
-	"script-tracking-gis/internal/api"
-	"script-tracking-gis/internal/config"
-	"script-tracking-gis/types"
 	"time"
+
+	"github.com/phucnd1303/script-tracking-gis/internal/api"
+	"github.com/phucnd1303/script-tracking-gis/internal/config"
+	"github.com/phucnd1303/script-tracking-gis/types"
 )
 
 type Tracker struct {

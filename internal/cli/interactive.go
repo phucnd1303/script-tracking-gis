@@ -4,9 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"script-tracking-gis/internal/controller"
-	"script-tracking-gis/internal/monitor"
 	"strings"
+
+	"github.com/phucnd1303/script-tracking-gis/internal/controller"
+	"github.com/phucnd1303/script-tracking-gis/internal/monitor"
 )
 
 type InteractiveCLI struct {

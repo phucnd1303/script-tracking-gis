@@ -4,7 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	types "script-tracking-gis/types"
+
+	types "github.com/phucnd1303/script-tracking-gis/types"
 )
 
 func LoadLocationsTemplate(path string) ([]types.Location, error) {

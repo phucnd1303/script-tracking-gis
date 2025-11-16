@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"script-tracking-gis/internal/app"
+
+	"github.com/phucnd1303/script-tracking-gis/internal/app"
 )
 
 func main() {

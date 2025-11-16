@@ -1,4 +1,4 @@
-module script-tracking-gis
+module github.com/phucnd1303/script-tracking-gis
 
 go 1.25.1
 

@@ -5,17 +5,18 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"script-tracking-gis/internal/api"
-	"script-tracking-gis/internal/cli"
-	"script-tracking-gis/internal/config"
-	"script-tracking-gis/internal/controller"
-	"script-tracking-gis/internal/monitor"
-	"script-tracking-gis/internal/repository"
-	"script-tracking-gis/internal/tracker"
-	"script-tracking-gis/types"
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/phucnd1303/script-tracking-gis/internal/api"
+	"github.com/phucnd1303/script-tracking-gis/internal/cli"
+	"github.com/phucnd1303/script-tracking-gis/internal/config"
+	"github.com/phucnd1303/script-tracking-gis/internal/controller"
+	"github.com/phucnd1303/script-tracking-gis/internal/monitor"
+	"github.com/phucnd1303/script-tracking-gis/internal/repository"
+	"github.com/phucnd1303/script-tracking-gis/internal/tracker"
+	"github.com/phucnd1303/script-tracking-gis/types"
 )
 
 type Application struct {

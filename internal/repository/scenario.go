@@ -2,7 +2,8 @@ package repository
 
 import (
 	"fmt"
-	types "script-tracking-gis/types"
+
+	types "github.com/phucnd1303/script-tracking-gis/types"
 )
 
 const (

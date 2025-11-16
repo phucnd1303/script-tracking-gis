@@ -7,10 +7,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"script-tracking-gis/internal/config"
-	"script-tracking-gis/pkg/utils"
-	"script-tracking-gis/types"
+
 	"time"
+
+	"github.com/phucnd1303/script-tracking-gis/internal/config"
+	"github.com/phucnd1303/script-tracking-gis/pkg/utils"
+	"github.com/phucnd1303/script-tracking-gis/types"
 )
 
 type Client struct {
