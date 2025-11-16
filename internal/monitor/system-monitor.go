@@ -69,10 +69,10 @@ func (sm *SystemMonitor) PrintMetrics(metrics SystemMetrics) {
 }
 
 func (sm *SystemMonitor) StartAutoMonitor(ctx context.Context, interval time.Duration) {
-	ticker := time.NewTicker(interval)
-	defer ticker.Stop()
-
 	go func() {
+		ticker := time.NewTicker(interval)
+		defer ticker.Stop()
+
 		for {
 			select {
 			case <-ctx.Done():

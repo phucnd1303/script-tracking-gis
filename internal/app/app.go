@@ -69,8 +69,7 @@ func (app *Application) shutdown() {
 func (app *Application) Run() error {
 	app.cli.Start()
 	app.shutdown()
-
-	go app.sm.StartAutoMonitor(app.globalCtx, 10*time.Second)
+	app.sm.StartAutoMonitor(app.globalCtx, 10*time.Second)
 
 	scenarios, err := repository.GetScenarios()
 
