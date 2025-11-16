@@ -13,8 +13,9 @@ const (
 )
 
 const (
-	sydneyLocationsPath        = "templates/australia/sydney.json"
-	duongDinhNgheLocationsPath = "templates/vietnam/duong-dinh-nghe.danang.json"
+	sydneyLocationsPath         = "templates/australia/sydney.json"
+	duongDinhNgheLocationsPath  = "templates/vietnam/duong-dinh-nghe.danang.json"
+	nhaTrangStreetLocationsPath = "templates/vietnam/tran-phu-nha-trang-street.json"
 )
 
 func GetScenarios() ([]types.Scenario, error) {
