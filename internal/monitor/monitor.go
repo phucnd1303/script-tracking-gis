@@ -1,7 +1,6 @@
 package monitor
 
 import (
-	"context"
 	"fmt"
 	"runtime"
 	"strings"
@@ -66,21 +65,4 @@ func (sm *SystemMonitor) PrintMetrics(metrics SystemMetrics) {
 	fmt.Printf("  GC Runs:         %d\n", metrics.NumGC)
 
 	fmt.Println(strings.Repeat("=", 70))
-}
-
-func (sm *SystemMonitor) StartAutoMonitor(ctx context.Context, interval time.Duration) {
-	go func() {
-		ticker := time.NewTicker(interval)
-		defer ticker.Stop()
-
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case <-ticker.C:
-				metrics := sm.GetMetrics()
-				sm.PrintMetrics(metrics)
-			}
-		}
-	}()
 }
